@@ -1,0 +1,28 @@
+# Editor
+.vscode/
+.idea/
+
+# Production builds
+dist/
+build/
+*/dist/
+*/build/
+packages/*/dist/
+packages/*/build/
+
+# Dependencies
+node_modules/
+*/node_modules/
+packages/*/node_modules/
+pnpm-lock.yaml
+yarn.lock
+
+# Docker
+docker-compose.override.yml
+docker-compose.*.yml
+!docker-compose.yml
+
+# Environment variables
+.env
+.env.*
+!.env.example
