@@ -17,10 +17,68 @@ services:
       dockerfile: packages/server/Dockerfile
     ports:
       - "5000:5000"
-    volumes:
-      - ./packages/server:/app/packages/server
     environment:
       - NODE_ENV=development
       - CLIENT_URL=http://localhost:5173
+      - MONGODB_URI=mongo://admin:password@mongo:27017/mydb?authSource=admin&directConnection=true
+    volumes:
+      - ./packages/server:/app/packages/server
     stdin_open: true
     tty: true
+    networks:
+      - mongo-net
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: mydb
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    restart: unless-stopped
+    command: [--auth, --bind_ip_all]
+    healthcheck:
+      test: |
+        timeout 10 bash -c '
+          until echo "db.runCommand({ping:1})" | mongosh --quiet --authenticationDatabase admin -u admin -p password localhost:27017/mydb; do
+            echo "Waiting for MongoDB..."
+            sleep 2
+          done
+        ' 
+      interval: 10s
+      timeout: 15s
+      retries: 5
+      start_period: 40s
+    networks:
+      - mongo-net
+      
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express-ui
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_MONGODB_AUTH_DATABASE: admin
+      ME_CONFIG_BASICAUTH: false
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongodb
+    networks:
+      - mongo-net
+
+
+volumes:
+  mongodb_data: 
+
+networks:
+  mongo-net:
+    driver: bridge
