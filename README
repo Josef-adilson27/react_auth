@@ -1,0 +1,16 @@
+# React Auth Project with Docker
+    
+## Development Setup
+
+**Старт всех сервисов:(react, nodejs,mongodb,mongo-express)**
+   Через докер:
+      1. docker compose up
+      2. docker compose watch
+      
+   Локальный запуск черке Workspaces:
+     Для react:      npm run dev:client 
+     Для сервера: npm run dev:server
+   
+### First Time Setup
+
+

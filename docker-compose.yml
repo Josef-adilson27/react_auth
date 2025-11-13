@@ -6,8 +6,15 @@ services:
       dockerfile: packages/client/Dockerfile
     ports:
       - "5173:5173"
-    volumes:
-      - ./client:/app/client
+    develop:
+      watch:
+        - action: sync+restart  # ← Docker перезапустит контейнер при изменениях
+          path: ./packages/client/src
+          target: /app/packages/client/src
+        - action: rebuild
+          path: package.json
+        - action: rebuild
+          path: packages/client/package.json
     environment:
       - NODE_ENV=development
 
@@ -20,9 +27,16 @@ services:
     environment:
       - NODE_ENV=development
       - CLIENT_URL=http://localhost:5173
-      - MONGODB_URI=mongo://admin:password@mongo:27017/mydb?authSource=admin&directConnection=true
-    volumes:
-      - ./packages/server:/app/packages/server
+      - MONGODB_URI=mongo://admin:password@mongo:27017/mydb?authSource=admin
+    develop:
+      watch:
+        - action: sync+restart  # ← Docker перезапустит контейнер при изменениях
+          path: ./packages/server/src
+          target: /app/packages/server/src
+        - action: rebuild
+          path: package.json
+        - action: rebuild
+          path: packages/server/package.json
     stdin_open: true
     tty: true
     networks:
@@ -41,7 +55,12 @@ services:
       - mongodb_data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     restart: unless-stopped
-    command: [--auth, --bind_ip_all]
+    command: [
+     "--auth",
+     "--bind_ip_all", 
+     "--logpath", "/var/log/mongodb/mongod.log",
+     "--quiet"  # уменьшаем детализацию логов
+    ]
     healthcheck:
       test: |
         timeout 10 bash -c '
@@ -50,10 +69,6 @@ services:
             sleep 2
           done
         ' 
-      interval: 10s
-      timeout: 15s
-      retries: 5
-      start_period: 40s
     networks:
       - mongo-net
       
