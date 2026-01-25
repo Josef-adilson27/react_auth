@@ -1,18 +1,29 @@
 import BaseRepository from "./baseMongoRepository";
-import User from "../models/User";
+import userModel from "../models/User";
 
-class UserRepository extends BaseRepository {
+class UserRepository extends BaseRepository<typeof userModel> {
   constructor() {
-    super(User);
+    super(userModel);
   }
-  async findByEmail(email: string) {
-    return await this.model.findOne({ email });
+  async create(userDto: any) {
+    return await this.model.create(userDto);
   }
-  async findActiveUsers() {
-    return await this.model.find();
+  
+  async findByEmail(email:string){
+    return await this.model.findOne({email})
   }
-  async updateUserProfile(userId: number, profileData: any) {
-    
+
+  findAll(): Promise<any[]> {
+    throw new Error("Method not implemented.");
+  }
+  findById(id: number): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+  update(id: number, data: any): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+  delete(id: any): Promise<any> {
+    throw new Error("Method not implemented.");
   }
 }
-
+export default UserRepository;

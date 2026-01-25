@@ -7,10 +7,21 @@
       1. docker compose up
       2. docker compose watch
       
-   Локальный запуск черке Workspaces:
+   Локальный запуск через Workspaces:
      Для react:      npm run dev:client 
      Для сервера: npm run dev:server
    
-### First Time Setup
 
 
+###Просмотр логов контейнера
+docker logs -f <container_name_or_id>
+
+
+### Mongo-express-ui:
+ http://localhost:8081
+
+
+## Установка пакета во все workspaces:
+npm install <package-name> --workspace=client --save-dev
+ или:
+npm i <package-name> -w client -D
