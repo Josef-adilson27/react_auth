@@ -3,7 +3,7 @@
 ## Development Setup
 
 **Старт всех сервисов:(react, nodejs,mongodb,mongo-express)**
-   Через докер:
+   Запуск через докер всего проека (server и client):
       1. docker compose up
       2. docker compose watch
       

@@ -18,9 +18,10 @@ export class AuthController {
     
      const hashedPassword = await PasswordService.hash(dto.password);
     
-      const user = (await this.authService.createUser({ name: dto.name, email: dto.email, password: hashedPassword })).save();
+      const user = (await this.authService.createUser({ name: dto.name, email: dto.email, password: hashedPassword }))
 
       const token = new  JwtUtils(process.env.JWT_SECRET as string).sign({id: user._id})
+      user.save();
       res.cookie('token',token,{
         httpOnly:true,
         secure: process.env.NODE_ENV  === "production", // true если production;
