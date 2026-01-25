@@ -11,7 +11,7 @@ export const getDatabaseConfig = (): DatabaseConfig => ({
 });
 
 export const getConnectionString = (): string => {
-  const env = (process.env.NODE_ENV || "development") as| "development"  | "test" | "production";
+  const env = (process.env.NODE_ENV || "development") as | "development"  | "test" | "production";
   const connectionStrings = {
     development: process.env.MONGODB_URI_DEV || "mongodb://admin:password@mongo:27017/mydb?authSource=admin",
     test:  process.env.MONGODB_URI_TEST || "mongodb://localhost:27017/test_database",
