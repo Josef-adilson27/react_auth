@@ -14,7 +14,10 @@ export class JwtUtils {
   }
 
   sign(payload: JwtPayload): string {
-    return jwt.sign(payload, this.secret, { expiresIn: '1h'});
+    if (!this.secret) {
+      throw new Error("JWT_SECRET not configured");
+    }
+    return jwt.sign(payload, this.secret, { expiresIn: "1h" });
   }
 
   verify(token: string): JwtPayload {
@@ -24,7 +27,7 @@ export class JwtUtils {
       throw new Error("Invalid or expired token");
     }
   }
-
+ 
   decode(token: string): JwtPayload | null {
     return jwt.decode(token) as JwtPayload | null;
   }
@@ -40,11 +43,10 @@ export class JwtUtils {
       return true;
     }
   }
-
+ 
   createRefreshToken(payload: JwtPayload): string {
-    return jwt.sign(payload, this.secret, { expiresIn: '7d'});
+    return jwt.sign(payload, this.secret, { expiresIn: "7d" });
   }
-
 }
 
 // Пример использования
