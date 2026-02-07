@@ -5,10 +5,13 @@ import { authRouter } from './routes/authRoutes';
 const app = express();
 const port = process.env.PORT || 5000;
 import { databaseInstance } from './config/mongoDB/mongoDB';
-import mongoose from 'mongoose';
+
+import dotenv from 'dotenv';
+
 
 await databaseInstance.connect();
-            
+
+dotenv.config();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({credentials:true}));
