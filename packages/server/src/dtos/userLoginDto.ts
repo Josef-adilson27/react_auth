@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z, ZodError } from "zod";
 
 export const CreateUserSchema = z.object({
   email: z
@@ -23,14 +23,30 @@ export class UserLoginDTOClass {
     public readonly email: string,
     public readonly password: string,
   ) {}
-  static validate(data: unknown): UserLoginDTOClass {
-    const result = CreateUserSchema.safeParse(data);
-    if (!result.success) {
-      throw new Error(result.error.message);
+
+ static validate(data: unknown): UserLoginDTOClass {
+    try {
+      // Используем parse вместо safeParse для получения исключения
+      const validatedData = CreateUserSchema.parse(data);
+      
+      return new UserLoginDTOClass(
+        validatedData.email.toLowerCase().trim(),
+        validatedData.password,
+      );
+    } catch (error) {
+      if (error instanceof ZodError) {
+        // получение ошибок из ZodError
+        const formattedErrors = error.issues
+          .map(issue => {
+            const path = issue.path.join('.');
+            return path ? `${path}: ${issue.message}` : issue.message;
+          })
+          .join('\n');
+        throw new Error(formattedErrors);
+      }
+      
+      // Если это не ZodError, пробрасываем дальше
+      throw error;
     }
-    return new UserLoginDTOClass(
-      result.data.email.toLowerCase().trim(),
-      result.data.password,
-    );
   }
 }
