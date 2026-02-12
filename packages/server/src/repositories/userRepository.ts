@@ -25,5 +25,6 @@ class UserRepository extends BaseRepository<typeof userModel> {
   delete(id: any): Promise<any> {
     throw new Error("Method not implemented.");
   }
+  
 }
 export default UserRepository;
